@@ -1,19 +1,15 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/mvlberry/backend/api/handlers"
 )
 
 func main() {
 	r := gin.Default()
 
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"msg": "Hello world",
-		})
-	})
+	//if /api/signup is hit with a POST request, run the signup function
+	r.POST("/api/signup", handlers.Signup)
 
-	r.Run("192.168.0.8:8080")
+	r.Run("localhost:8080")
 }
