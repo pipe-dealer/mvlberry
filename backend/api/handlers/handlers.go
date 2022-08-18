@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,6 +25,7 @@ func Signup(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"msg": "Account successfully created. Redirecting to login page",
 		})
+		fmt.Printf("User %s was successfully created\n", newUser.Username)
 	case 1:
 		c.JSON(http.StatusBadRequest, gin.H{
 			"msg": "Username already exists",
