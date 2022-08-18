@@ -1,7 +1,5 @@
 package database
 
-import "fmt"
-
 //User datatype
 type User struct {
 	Username string `json:"username"`
@@ -43,7 +41,6 @@ func Adduser(newuser User) int {
 		if _, err := Db.Exec(sqlInsert, username, password); err != nil {
 			panic(err)
 		}
-		fmt.Println(username)
 		return 0 //user successfully created
 	} else if checkDuplicates(username) == 1 {
 		return 1 //username already exists
