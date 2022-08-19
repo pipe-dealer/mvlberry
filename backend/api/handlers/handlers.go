@@ -41,6 +41,42 @@ func Signup(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	res := database.Getusers()
-	fmt.Println(res)
+	var user database.User
+	//get login details
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"msg": "Could not parse JSON",
+		})
+	}
+	//get all users
+	allusers := database.Getusers()
+
+	for _, v := range allusers {
+		c_username, c_password := v.Username, v.Password
+
+		// if username was found
+		if user.Username == c_username {
+			// if password is correct
+			if user.Password == c_password {
+				c.JSON(http.StatusOK, gin.H{
+					"msg": "Login successful. Redirecting to home page",
+				})
+				fmt.Printf("User %s has logged in\n", user.Username)
+				return
+			} else {
+				c.JSON(http.StatusOK, gin.H{
+					"msg": "Username or password incorrect",
+				})
+				fmt.Printf("User %s has attempted to log in\n", user.Username)
+				return
+			}
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "Username or password incorrect",
+	})
+
+	fmt.Println("A user has tried to login in with an unknown account")
+
 }
