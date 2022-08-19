@@ -27,13 +27,15 @@ func Signup(c *gin.Context) {
 		})
 		fmt.Printf("User %s was successfully created\n", newUser.Username)
 	case 1:
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"msg": "Username already exists",
 		})
+		fmt.Println("Could not create account: username already exists")
 	case 2:
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"msg": "Could not create account",
 		})
+		fmt.Println("Could not create account")
 
 	}
 }
