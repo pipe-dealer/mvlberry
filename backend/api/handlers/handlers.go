@@ -39,3 +39,8 @@ func Signup(c *gin.Context) {
 
 	}
 }
+
+func Login(c *gin.Context) {
+	res := database.Getusers()
+	fmt.Println(res)
+}
