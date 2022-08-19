@@ -2,6 +2,7 @@ package database
 
 //User datatype
 type User struct {
+	Id       int
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
@@ -48,4 +49,36 @@ func Adduser(newuser User) int {
 		return 2 //could not create user
 	}
 
+}
+
+//gets all account details
+func Getusers() []User {
+	var allUsers []User //create array of User struct
+
+	sqlGet := "SELECT * FROM users ORDER BY id ASC;" //select all records in users table
+
+	rows, err := Db.Query(sqlGet)
+
+	if err != nil {
+		panic(err)
+	}
+
+	//gets id, username and password from each record and stores it into allUsers
+	for rows.Next() {
+		var id int
+		var username string
+		var password string
+
+		if err := rows.Scan(&id, &username, &password); err != nil {
+			panic(err)
+		}
+
+		allUsers = append(allUsers, User{
+			Id:       id,
+			Username: username,
+			Password: password,
+		})
+	}
+
+	return allUsers
 }
