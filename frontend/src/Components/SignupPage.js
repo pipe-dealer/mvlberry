@@ -2,15 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 
-
-
 const SignupPage = () => {
     const navigate = useNavigate();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [status, setStatus] = useState('');
-
 
     const usernameChange = (event) => {
         let {_, value} = event.target
@@ -39,18 +36,16 @@ const SignupPage = () => {
                 password: password
             }).then((response) => {
                 setStatus(response.data.msg)
-                setTimeout(() => {
-                    navigate('/login')
-
-                },1000)
+                if (response.data.msg == "Account successfully created. Redirecting to login page") {
+                    setTimeout(() => {
+                        navigate('/login')
+    
+                    },1000)
+    
+                }
             })
         }
-
-
-
-
     }
-
 
     return(
             <div>
