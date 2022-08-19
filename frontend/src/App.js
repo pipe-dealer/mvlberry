@@ -1,12 +1,19 @@
-import React, { Component } from 'react';
+import React, {useState} from 'react';
 import RouteHandler from './Routes';
+import Cookies from 'universal-cookie';
 
-class App extends Component {
-    render() {
-        return (
-            <RouteHandler />
-        )
-    }
+
+
+const App = () => {
+    const cookies = new Cookies();
+    //set cookies to empty
+    cookies.set('loggedin', 0);
+    cookies.set('currentuser', '');
+
+    return (
+        <RouteHandler />
+    )
 }
+
 
 export default App
