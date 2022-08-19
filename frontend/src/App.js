@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import SignupForm from './Components/SignupForm';
+import RouteHandler from './Routes';
 
 class App extends Component {
     render() {
         return (
-            <SignupForm />
+            <RouteHandler />
         )
     }
 }
