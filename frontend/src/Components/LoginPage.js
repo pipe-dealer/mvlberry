@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
+import Cookies from 'universal-cookie';
 
 //similar to SignupPage
 const LoginPage = () => {
     const navigate = useNavigate();
+    const cookies = new Cookies();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -35,7 +37,12 @@ const LoginPage = () => {
                 password: password
             }).then((response) => {
                 setStatus(response.data.msg)
-                if (response.data.msg == "Login successful. Redirecting to home page") {
+                if (response.data.msg === "Login successful. Redirecting to home page") {
+                    //set cookie loggedin to true
+                    cookies.set('loggedin', '1')
+                    //create cookie currentuser with username as value
+                    cookies.set('currentuser', username);
+
                     setTimeout(() => {
                         navigate('/')
     
