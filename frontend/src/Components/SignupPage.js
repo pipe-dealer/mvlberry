@@ -40,7 +40,7 @@ const SignupPage = () => {
                     setTimeout(() => {
                         navigate('/login')
     
-                    },1000)
+                    },2000)
     
                 }
             })
