@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mvlberry/backend/api/database"
+	"github.com/mvlberry/backend/api/ws"
 )
 
 // function to create account when api request is made
@@ -90,4 +91,8 @@ func Getfriends(c *gin.Context) {
 		friends = append(friends, v.Username)
 	}
 	c.JSON(http.StatusOK, friends)
+}
+
+func Startws(c *gin.Context) {
+	ws.Startws(c)
 }
