@@ -29,6 +29,7 @@ func main() {
 	r.POST("/api/signup", handlers.Signup)
 	//if /api/login is hit with a POST request, run the login function
 	r.POST("/api/login", handlers.Login)
+	r.GET("api/home/getfriends", handlers.Getfriends)
 
 	r.Run("localhost:8080")
 }
