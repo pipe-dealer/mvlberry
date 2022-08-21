@@ -80,3 +80,14 @@ func Login(c *gin.Context) {
 	fmt.Println("A user has tried to login in with an unknown account")
 
 }
+
+func Getfriends(c *gin.Context) {
+	var friends []string
+	fmt.Println("Getting friends")
+
+	friendsDetails := database.Getusers()
+	for _, v := range friendsDetails {
+		friends = append(friends, v.Username)
+	}
+	c.JSON(http.StatusOK, friends)
+}
