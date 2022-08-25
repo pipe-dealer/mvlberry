@@ -1,10 +1,18 @@
 package database
 
+import "fmt"
+
 //User datatype
 type User struct {
 	Id       int
 	Username string `json:"username"`
 	Password string `json:"password"`
+}
+
+type Friends struct {
+	Id    int //user id
+	F_id  int //friend id
+	Fs_id int // friendship id
 }
 
 //checks if the new username already exists
@@ -81,4 +89,59 @@ func Getusers() []User {
 	}
 
 	return allUsers
+}
+
+//gets details of specific user
+func Getuser(u_id int) User {
+	sqlGet := "SELECT * FROM users WHERE id = $1"
+	row := Db.QueryRow(sqlGet, u_id)
+
+	var id int
+	var username string
+	var password string
+
+	//assigns query data to each variable initialised above
+	if err := row.Scan(&id, &username, &password); err != nil {
+		panic(err)
+	}
+	user := User{
+		Id:       id,
+		Username: username,
+		Password: password,
+	}
+
+	return user
+
+}
+
+//gets friends of user
+func Getfriends(u_id string) []Friends {
+	var allFriends []Friends
+
+	sqlGet := "SELECT * FROM friendships WHERE id in (SELECT users.id FROM users WHERE users.username = $1)"
+
+	rows, err := Db.Query(sqlGet, u_id)
+	if err != nil {
+		fmt.Println("error getting friends")
+	}
+
+	//loops through all queried records
+	for rows.Next() {
+		var id int
+		var f_id int
+		var fs_id int
+		if err := rows.Scan(&id, &f_id, &fs_id); err != nil {
+			panic(err)
+		}
+		//create Friend struct with queried data
+		friend := Friends{
+			Id:    id,
+			F_id:  f_id,
+			Fs_id: fs_id,
+		}
+		//add Friend to allFriends
+		allFriends = append(allFriends, friend)
+	}
+
+	return allFriends
 }
