@@ -83,14 +83,19 @@ func Login(c *gin.Context) {
 }
 
 func Getfriends(c *gin.Context) {
-	var friends []string
-	fmt.Println("Getting friends")
-
-	friendsDetails := database.Getusers()
-	for _, v := range friendsDetails {
-		friends = append(friends, v.Username)
+	var allfriends []string
+	username := c.Query("user")
+	friends := database.Getfriends(username)
+	fmt.Println("Friends of user ", username)
+	//get friend's username add it to array
+	for _, v := range friends {
+		f_user := database.Getuser(v.F_id).Username
+		fmt.Println(f_user)
+		allfriends = append(allfriends, f_user)
 	}
-	c.JSON(http.StatusOK, friends)
+	//send friends' usernames back to client
+	c.JSON(http.StatusOK, allfriends)
+
 }
 
 func Startws(c *gin.Context) {
