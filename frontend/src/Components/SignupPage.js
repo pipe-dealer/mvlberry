@@ -51,7 +51,7 @@ const SignupPage = () => {
         if (event.key === 'Enter') {
             event.preventDefault();
 
-            login();
+            createAccount();
         }
     }
 
