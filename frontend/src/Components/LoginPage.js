@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import Cookies from 'universal-cookie';
@@ -53,6 +53,14 @@ const LoginPage = () => {
         }
     }
 
+    const enterPressed = event => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            login();
+        }
+    }
+
     return(
         <div>
             <form>
@@ -64,6 +72,8 @@ const LoginPage = () => {
                 id="username" 
                 placeholder="Enter username" 
                 onChange={usernameChange}
+                onKeyDown={enterPressed}
+
                 />
             {/* Password field */}
                 <label htmlFor='password'>Password</label>
@@ -73,8 +83,9 @@ const LoginPage = () => {
                 id="password" 
                 placeholder="Enter password" 
                 onChange={passwordChange}
+                onKeyDown={enterPressed}
                 />
-                <input type="button" value="Login" onClick={login}/>
+                <input type="button" value="Login" onClick={login} />
             </form>
             {/* Display status message */}
             <p>
