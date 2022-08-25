@@ -47,6 +47,15 @@ const SignupPage = () => {
         }
     }
 
+    const enterPressed = event => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            login();
+        }
+    }
+
+
     return(
             <div>
                 <form>
@@ -58,6 +67,8 @@ const SignupPage = () => {
                     id="username" 
                     placeholder="Enter desired username" 
                     onChange={usernameChange}
+                    onKeyDown={enterPressed}
+
                     />
                 {/* Password field */}
                     <label htmlFor='password'>Password</label>
@@ -67,6 +78,8 @@ const SignupPage = () => {
                     id="password" 
                     placeholder="Enter a password" 
                     onChange={passwordChange}
+                    onKeyDown={enterPressed}
+
                     />
                     <input type="button" value="Sign Up" onClick={createAccount}/>
                 </form>
