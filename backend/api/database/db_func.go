@@ -92,9 +92,32 @@ func Getusers() []User {
 }
 
 //gets details of specific user
-func Getuser(u_id int) User {
+func GetuserByID(u_id int) User {
 	sqlGet := "SELECT * FROM users WHERE id = $1"
 	row := Db.QueryRow(sqlGet, u_id)
+
+	var id int
+	var username string
+	var password string
+
+	//assigns query data to each variable initialised above
+	if err := row.Scan(&id, &username, &password); err != nil {
+		panic(err)
+	}
+	user := User{
+		Id:       id,
+		Username: username,
+		Password: password,
+	}
+
+	return user
+
+}
+
+//Gets user details from username
+func GetuserByUsername(u_username string) User {
+	sqlGet := "SELECT * FROM users WHERE username = $1"
+	row := Db.QueryRow(sqlGet, u_username)
 
 	var id int
 	var username string
