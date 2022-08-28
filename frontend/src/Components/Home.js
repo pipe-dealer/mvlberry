@@ -23,7 +23,7 @@ const Displayfriends = () => {
         }
     }, []);
 
-    return friendlist.map((friend) => <input key={friend} type='button' value={friend} />)
+    return friendlist
 }
 
 const Home = () => {
@@ -42,16 +42,25 @@ const Home = () => {
     //check if user has logged in
     if (cookies.get('loggedin') == 1) {
         //displays a welcome message with username
+        const friends = Displayfriends()
+        const currentuser = cookies.get('currentuser')
+
+        const startChat = (user2) => {
+            navigate("/chat", {state : {user2: user2}})
+        }
+
         return(
             <div>
                 <h1>
-                    Welcome {cookies.get('currentuser')}
+                    Welcome {currentuser}
                 </h1>
                 <h2>
                     Your friends:
                 </h2>
                 <br></br>
-                <Displayfriends />
+                {friends.map((friend,index) => (
+            <input key={index} type='button' value={friend} onClick={() => startChat(friend)}></input>
+        ))}
             </div>
         )
     } else {
