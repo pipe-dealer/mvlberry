@@ -15,51 +15,52 @@ var Upgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true }, //allow any connection connect to websocket enpoint
 }
 
-var count = 0
-
 // adds client to channel if it exists, otherwise create a new channel
-func serve(count int, ws *websocket.Conn) {
-	var chatchannel *ChatChannel
+func serve(clientUsername string, clientId int, chatId int, ws *websocket.Conn) {
+	var chat *Chat
 	f := false
-	//using a simple counter as channel ID, if channel ID exists, add client to that channel
+	//checks if channel ID exists, add client to that channel
 	for _, v := range Allchannels {
-		if count == v.Id {
-			chatchannel = v
+		if chatId == v.Id {
+			chat = v
 			f = true
 			break
 		}
 	}
-	//otherwise create a new channel with counter as channel ID
+	//otherwise create a new channel with chatId
 	if !f {
-		chatchannel = Newchannel(count)
+		chat = Newchannel(chatId)
 	}
-	go chatchannel.Start()
 
+	//start up chat
+	go chat.Start()
+
+	//create client
 	client := Client{
-		Conn:        ws,
-		ChatChannel: chatchannel,
+		Id:       clientId,
+		Username: clientUsername,
+		Conn:     ws,
+		Chats:    chat,
 	}
 
 	fmt.Println("Number of chats:", len(Allchannels))
 
-	chatchannel.Joined <- &client
+	//add client to chat
+	chat.Joined <- &client
+	//check for actions from client
 	client.Read()
 
 }
 
-func Startws(c *gin.Context) {
+func Startws(clientUsername string, clientId int, chatId int, c *gin.Context) {
+	//upgrade connection to websocket
 	ws, err := Upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{
 			"msg": "Could not establish connection",
 		})
 	}
-	//counter will alternate between 1 and 2, which determines which channel new clients will go into
-	count += 1
-	if count > 2 {
-		count = 1
-	}
-
-	serve(count, ws)
+	//add client to channel
+	serve(clientUsername, clientId, chatId, ws)
 
 }
