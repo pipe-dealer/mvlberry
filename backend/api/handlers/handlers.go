@@ -86,11 +86,10 @@ func Getfriends(c *gin.Context) {
 	var allfriends []string
 	username := c.Query("user")
 	friends := database.Getfriends(username)
-	fmt.Println("Friends of user ", username)
+	fmt.Println("Getting friends of user ", username)
 	//get friend's username add it to array
 	for _, v := range friends {
-		f_user := database.Getuser(v.F_id).Username
-		fmt.Println(f_user)
+		f_user := database.GetuserByID(v.F_id).Username
 		allfriends = append(allfriends, f_user)
 	}
 	//send friends' usernames back to client
@@ -99,5 +98,24 @@ func Getfriends(c *gin.Context) {
 }
 
 func Startws(c *gin.Context) {
-	ws.Startws(c)
+	// client starts ws connection with another friend, sends query with their username and friend's username
+	var chatId int
+
+	user1 := c.Query("user1")
+	user2 := c.Query("user2")
+
+	user1_id := database.GetuserByUsername(user1).Id
+	user2_id := database.GetuserByUsername(user2).Id
+
+	user1_friends := database.Getfriends(user1)
+
+	// get friendship id that corresponds between these two friends
+	//assign friendship id to chat id
+	for _, v := range user1_friends {
+		if v.F_id == user2_id {
+			chatId = v.Fs_id
+		}
+	}
+	//initiate websocket connection
+	ws.Startws(user1, user1_id, chatId, c)
 }
