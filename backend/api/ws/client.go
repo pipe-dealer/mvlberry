@@ -32,7 +32,7 @@ func (c *Client) Read() {
 		//get message sent from client
 		msgType, msg, err := c.Conn.ReadMessage()
 		if err != nil {
-			fmt.Println("client.go 34")
+			break
 		}
 
 		currentTime := time.Now()
