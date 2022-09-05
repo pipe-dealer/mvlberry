@@ -15,9 +15,13 @@ type Friends struct {
 	Fs_id int // friendship id
 }
 
+type Request struct {
+	C_username   string `json:"c_username"`
+	Req_username string `json:"req_username"`
+}
+
 //checks if the new username already exists
 func checkDuplicates(username string) int {
-
 	sqlSelect := "SELECT username FROM users"
 	rows, err := Db.Query(sqlSelect)
 	if err != nil {
@@ -92,7 +96,7 @@ func Getusers() []User {
 }
 
 //gets details of specific user
-func GetuserByID(u_id int) User {
+func GetuserbyID(u_id int) (User, int) {
 	sqlGet := "SELECT * FROM users WHERE id = $1"
 	row := Db.QueryRow(sqlGet, u_id)
 
@@ -102,7 +106,7 @@ func GetuserByID(u_id int) User {
 
 	//assigns query data to each variable initialised above
 	if err := row.Scan(&id, &username, &password); err != nil {
-		panic(err)
+		return User{}, 1
 	}
 	user := User{
 		Id:       id,
@@ -110,12 +114,12 @@ func GetuserByID(u_id int) User {
 		Password: password,
 	}
 
-	return user
+	return user, 0
 
 }
 
 //Gets user details from username
-func GetuserByUsername(u_username string) User {
+func Getuserbyusername(u_username string) (User, int) {
 	sqlGet := "SELECT * FROM users WHERE username = $1"
 	row := Db.QueryRow(sqlGet, u_username)
 
@@ -125,7 +129,7 @@ func GetuserByUsername(u_username string) User {
 
 	//assigns query data to each variable initialised above
 	if err := row.Scan(&id, &username, &password); err != nil {
-		panic(err)
+		return User{}, 1 //if username does not exist return error code 1
 	}
 	user := User{
 		Id:       id,
@@ -133,17 +137,17 @@ func GetuserByUsername(u_username string) User {
 		Password: password,
 	}
 
-	return user
+	return user, 0
 
 }
 
 //gets friends of user
-func Getfriends(u_id string) []Friends {
+func Getfriends(u_username string) []Friends {
 	var allFriends []Friends
 
 	sqlGet := "SELECT * FROM friendships WHERE id in (SELECT users.id FROM users WHERE users.username = $1)"
 
-	rows, err := Db.Query(sqlGet, u_id)
+	rows, err := Db.Query(sqlGet, u_username)
 	if err != nil {
 		fmt.Println("error getting friends")
 	}
@@ -167,4 +171,62 @@ func Getfriends(u_id string) []Friends {
 	}
 
 	return allFriends
+}
+
+//adds request to database
+func Addrequest(c_id int, req_id int) int {
+	//add c_id and req_id to requests table
+	if Checkrequest(c_id, req_id) {
+		sqlInsert := "INSERT INTO requests(id,r_id) VALUES ($1,$2)"
+		if _, err := Db.Exec(sqlInsert, c_id, req_id); err != nil {
+			return 1 //could not send request
+		} else {
+			return 0 //request sent
+		}
+	} else {
+		return 2 //request already exists
+	}
+
+}
+
+//check if request already exists
+func Checkrequest(c_id int, req_id int) bool {
+	var reqCount int
+	sqlSelect := "SELECT count(*) FROM requests WHERE $1 IN (id,r_id) AND $2 IN (id,r_id)"
+	row := Db.QueryRow(sqlSelect, c_id, req_id)
+	if err := row.Scan(&reqCount); err != nil {
+		panic(err)
+	}
+
+	if reqCount == 0 {
+		return true //no duplicate requests
+	} else {
+		return false //duplicate requests exist
+	}
+
+}
+
+//get requests made to user
+func Getincomingrequests(r_id int) []Request {
+	var allRequests []Request
+	sqlGet := "SELECT id FROM requests WHERE r_id = $1"
+	rows, err := Db.Query(sqlGet, r_id)
+	if err != nil {
+		panic(err)
+	}
+
+	for rows.Next() {
+		var c_id int
+		if err := rows.Scan(&c_id); err != nil {
+			panic(err)
+		}
+		c_user, _ := GetuserbyID(c_id)
+		c_username := c_user.Username
+		req := Request{
+			C_username: c_username,
+		}
+		allRequests = append(allRequests, req)
+	}
+
+	return allRequests
 }
