@@ -1,7 +1,7 @@
 -- \i 'C:/Users/test/mvlberry/sql/createTables.sql'
 
 
-DROP TABLE IF EXISTS users, friendships CASCADE; 
+DROP TABLE IF EXISTS users, friendships, requests CASCADE; 
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -14,4 +14,10 @@ CREATE TABLE friendships (
     f_id INTEGER NOT NULL references "users" (id),
     fs_id INTEGER
 
+);
+
+CREATE TABLE requests (
+    req_id SERIAL PRIMARY KEY,
+    id INTEGER NOT NULL references "users" (id),
+    r_id INTEGER NOT NULL references "users" (id)
 );
