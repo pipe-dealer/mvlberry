@@ -12,7 +12,7 @@ const Displayfriends = () => {
     useEffect(() => {
         if (cookies.get('loggedin') == 1) {
             //get user's friends
-            axios.get('http://localhost:8080/api/home/getfriends', {params: {user: cookies.get('currentuser')}}).then((response) => {
+            axios.get('http://localhost:8080/api/home/getfriends', {params: {current_user: cookies.get('currentuser')}}).then((response) => {
                 const friends = []
                 for (const r in response.data){
                     const friend = (response.data[r])
