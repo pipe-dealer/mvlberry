@@ -24,6 +24,10 @@ func setCORS() gin.HandlerFunc {
 func main() {
 	r := gin.Default()
 	r.Use(setCORS())
+	// addr := os.Getenv("PORT")
+	// if addr == "" {
+	// 	addr = ":8080"
+	// }
 
 	//if /api/signup is hit with a POST request, run the signup function
 	r.POST("/api/signup", handlers.Signup)
@@ -31,9 +35,12 @@ func main() {
 	//if /api/login is hit with a POST request, run the login function
 	r.POST("/api/login", handlers.Login)
 
-	r.GET("api/home/getfriends", handlers.Getfriends)
+	r.GET("api/home/getfriends", handlers.GetFriends)
 
-	r.GET("api/ws", handlers.Startws)
+	r.GET("api/ws", handlers.StartWS)
+	// curl -X POST http://localhost:8080/api/sendrequest -H 'Content-Type: application/json' -d '{"c_username":"test3","req_username":"test5"}'
+	r.POST("/api/request/sendrequest", handlers.SendRequest)
+	r.GET("api/request/getincomingreq", handlers.GetIncomingRequests)
 
 	r.Run("localhost:8080")
 }
