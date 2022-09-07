@@ -89,11 +89,7 @@ func (chatchannel *Chat) Start() {
 		//get message sent from a client and sends it to all clients in Chat
 		case msg := <-chatchannel.Send:
 			for client := range chatchannel.Clients {
-				if err := client.Conn.WriteMessage(msg.MessageType, msg.Msg); err != nil {
-					fmt.Println("Could not send message to", client.Username)
-
-				}
-				break
+				client.Conn.WriteMessage(msg.MessageType, msg.Msg)
 			}
 
 		}
