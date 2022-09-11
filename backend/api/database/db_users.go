@@ -2,7 +2,7 @@ package database
 
 //User datatype
 type User struct {
-	Id       int
+	Id       int    //user id
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
