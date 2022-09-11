@@ -41,6 +41,7 @@ func main() {
 	// curl -X POST http://localhost:8080/api/sendrequest -H 'Content-Type: application/json' -d '{"c_username":"test3","req_username":"test5"}'
 	r.POST("/api/request/sendrequest", handlers.SendRequest)
 	r.GET("api/request/getincomingreq", handlers.GetIncomingRequests)
+	r.POST("api/request/handlerequest", handlers.HandleRequest)
 
 	r.Run("localhost:8080")
 }
