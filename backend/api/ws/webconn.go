@@ -20,7 +20,7 @@ func serve(clientUsername string, clientId int, chatId int, ws *websocket.Conn) 
 	var chat *Chat
 	f := false
 	//checks if channel ID exists, add client to that channel
-	for _, v := range Allchannels {
+	for _, v := range Allchats {
 		if chatId == v.Id {
 			chat = v
 			f = true
@@ -43,7 +43,7 @@ func serve(clientUsername string, clientId int, chatId int, ws *websocket.Conn) 
 		Chats:    chat,
 	}
 
-	fmt.Println("Number of chats:", len(Allchannels))
+	fmt.Println("Number of chats:", len(Allchats))
 
 	//add client to chat
 	chat.Joined <- &client
