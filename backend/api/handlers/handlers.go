@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mvlberry/backend/api/algorithms"
 	"github.com/mvlberry/backend/api/database"
 	"github.com/mvlberry/backend/api/ws"
 )
@@ -48,6 +49,9 @@ func Login(c *gin.Context) {
 			"msg": "Could not parse JSON",
 		})
 	}
+	//hash password
+	encrypted_Password := algorithms.Sha_256(user.Password)
+
 	//get all users and checks if entered details exist
 	allusers := database.Getusers()
 	for _, v := range allusers {
@@ -56,7 +60,7 @@ func Login(c *gin.Context) {
 		// if username was found
 		if user.Username == c_username {
 			// if password is correct
-			if user.Password == c_password {
+			if encrypted_Password == c_password {
 				c.JSON(http.StatusOK, gin.H{
 					"msg": "Login successful. Redirecting to home page",
 				})
