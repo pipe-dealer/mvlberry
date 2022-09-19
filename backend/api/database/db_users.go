@@ -1,13 +1,17 @@
 package database
 
-//User datatype
+import (
+	"github.com/mvlberry/backend/api/algorithms"
+)
+
+// User datatype
 type User struct {
 	Id       int    //user id
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-//checks if the new username already exists
+// checks if the new username already exists
 func checkDuplicates(username string) int {
 	sqlSelect := "SELECT username FROM users"
 	rows, err := Db.Query(sqlSelect)
@@ -29,17 +33,19 @@ func checkDuplicates(username string) int {
 	return 0
 }
 
-//Adds new user to database, and returns a response code, which will produce a different response message depending on the code
+// Adds new user to database, and returns a response code, which will produce a different response message depending on the code
 func Adduser(newuser User) int {
 	username := newuser.Username
 	password := newuser.Password
 
+	//hash password
+	encrypted_password := algorithms.Sha_256(password)
 	//if username does not exist, add new user to database
 	if checkDuplicates(username) == 0 {
 		sqlInsert := "INSERT INTO users (username,password) VALUES ($1,$2)"
 
-		if _, err := Db.Exec(sqlInsert, username, password); err != nil {
-			panic(err)
+		if _, err := Db.Exec(sqlInsert, username, encrypted_password); err != nil {
+			return 2 //could not create user
 		}
 		return 0 //user successfully created
 	} else if checkDuplicates(username) == 1 {
@@ -50,7 +56,7 @@ func Adduser(newuser User) int {
 
 }
 
-//gets all account details
+// gets all account details
 func Getusers() []User {
 	var allUsers []User //create array of User struct
 
@@ -82,7 +88,7 @@ func Getusers() []User {
 	return allUsers
 }
 
-//gets details of specific user
+// gets details of specific user
 func GetuserbyID(c_id int) (User, int) {
 	sqlGet := "SELECT * FROM users WHERE id = $1"
 	row := Db.QueryRow(sqlGet, c_id)
@@ -105,7 +111,7 @@ func GetuserbyID(c_id int) (User, int) {
 
 }
 
-//Gets user details from username
+// Gets user details from username
 func Getuserbyusername(c_username string) (User, int) {
 	sqlGet := "SELECT * FROM users WHERE username = $1"
 	row := Db.QueryRow(sqlGet, c_username)
