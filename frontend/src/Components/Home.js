@@ -39,6 +39,15 @@ const Home = () => {
         navigate('/signup')
     }
 
+    //log out
+    const logout = () => {
+        //reset cookies
+        cookies.set('loggedin', 0)
+        cookies.set('currentuser', '')
+        //reload page
+        window.location.reload(false)
+    }
+
     //check if user has logged in
     if (cookies.get('loggedin') == 1) {
         //displays a welcome message with username
@@ -54,6 +63,10 @@ const Home = () => {
                 <h1>
                     Welcome {currentuser}
                 </h1>
+                <input
+                type = 'button'
+                value='Log out'
+                onClick={logout} />
                 <h2>
                     Your friends:
                 </h2>
